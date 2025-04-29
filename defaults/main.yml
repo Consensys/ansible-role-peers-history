@@ -1,0 +1,38 @@
+---
+
+# User and group
+peers_history_user: peers-history
+peers_history_group: "{{ peers_history_user }}"
+peers_history_version: "v1.0.0"
+
+# Version to install
+peers_history_download_url: "https://github.com/Consensys/peers-history/releases/download/{{ peers_history_version }}/peers-history-{{ peers_history_version }}-app.tar.gz"
+
+# Directory paths
+peers_history_base_dir: "/opt/peers-history"
+peers_history_install_dir: "{{ peers_history_base_dir }}/peers-history-{{ peers_history_version }}"
+peers_history_current_dir: "{{ peers_history_base_dir }}/current"
+peers_history_data_dir: "{{ peers_history_base_dir }}/data"
+peers_history_log_dir: "/var/log/peers-history"
+
+# Managed service config
+peers_history_managed_service: true
+peers_history_systemd_state: restarted
+peers_history_systemd_template: peers-history.service.j2
+peers_history_systemd_dir: /etc/systemd/system
+# do not override _peers_history_internal_cmdline_args
+# this is a string
+_peers_history_internal_cmdline_args: ""
+# use these to pass in cmdline_args not present in the above
+# this is a list
+peers_history_cmdline_args: []
+
+# peers_history config
+peers_history_rpc_url: "http://localhost:8545"
+peers_history_ttl: 365
+peers_history_scrape_interval: 15
+peers_history_keep_alive_log_interval: 300
+peers_history_verbose: true
+
+# internal state to maintain idempotency
+peers_history_state_updates: []

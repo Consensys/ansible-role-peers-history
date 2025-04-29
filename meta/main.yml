@@ -1,0 +1,29 @@
+---
+galaxy_info:
+  author: Consensys
+  role_name: peers_history
+  description: elc peers_history is sidecar for an elc to keep track of peers
+  company: Consensys
+  license: license (Apache)
+  min_ansible_version: 2.8.2
+  platforms:
+    - name: Debian
+      versions:
+        - trixie
+        - bookworm
+        - bullseye
+    - name: Ubuntu
+      versions:
+        - noble
+        - jammy
+        - focal
+    - name: Fedora
+      versions:
+        - 43
+        - 42
+        - 41
+  galaxy_tags:
+    - peers_history
+    - blockchain
+    - ethereum
+    

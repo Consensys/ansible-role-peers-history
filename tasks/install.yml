@@ -1,0 +1,78 @@
+---
+- name: Ensure peers_history group exists
+  group:
+    name: "{{ peers_history_group }}"
+    state: present
+  become: true
+
+- name: Create peers_history user
+  user:
+    comment:  peers_history client user
+    name: "{{ peers_history_user }}"
+    group: "{{ peers_history_group }}"
+  become: true
+
+- name: Create base directory
+  file:
+    path: "{{ peers_history_base_dir }}"
+    state: directory
+    owner: "{{ peers_history_user }}"
+    group: "{{ peers_history_group }}"
+  become: true
+
+- name: Create data directory
+  file:
+    path: "{{ peers_history_data_dir }}"
+    state: directory
+    owner: "{{ peers_history_user }}"
+    group: "{{ peers_history_group }}"
+    recurse: yes
+  become: true
+
+- name: Create install directory
+  file:
+    path: "{{ peers_history_install_dir }}"
+    state: directory
+    owner: "{{ peers_history_user }}"
+    group: "{{ peers_history_group }}"
+  become: true
+
+- name: Create log directory
+  file:
+    path: "{{ peers_history_log_dir }}"
+    state: directory
+    owner: "{{ peers_history_user }}"
+    group: "{{ peers_history_group }}"
+  become: true
+
+- name: Setup logrotate
+  template:
+    src: "logrotate/peers_history"
+    dest: "/etc/logrotate.d/peers_history"
+  become: true
+
+- name: Extract peers_history source to install directory
+  unarchive:
+    src: "{{ peers_history_download_url }}"
+    remote_src: yes
+    dest: "{{ peers_history_install_dir }}"
+    owner: "{{ peers_history_user }}"
+    group: "{{ peers_history_group }}"
+    mode: '0775'
+    extra_opts:
+      - --strip-components
+      - '1'
+  become: true
+
+- name: Create a symlink to current
+  file:
+    src: "{{ peers_history_install_dir }}/"
+    dest: "{{ peers_history_current_dir }}"
+    state: link
+  become: true
+  register: link_current
+
+- name: Set updated optionally to trigger a systemd restart at the end
+  set_fact:
+    peers_history_state_updates: "{{ peers_history_state_updates + ['peers_history.install_dir'] }}"
+  when: link_current is changed

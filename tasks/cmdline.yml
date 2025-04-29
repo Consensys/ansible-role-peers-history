@@ -1,0 +1,33 @@
+---
+- name: Add basics to the cmdline_args
+  set_fact:
+    _peers_history_internal_cmdline_args: >
+      {{_peers_history_internal_cmdline_args}}
+      --rpc-url={{peers_history_rpc_url}}
+      --ttl={{peers_history_ttl}}
+      --db-dir={{peers_history_data_dir}}
+      --log-dir={{peers_history_log_dir}}
+      --keep-alive-log-interval={{peers_history_keep_alive_log_interval}}
+      --scrape-interval={{peers_history_scrape_interval}}
+
+- name: Add verbosity settings to the cmdline_args
+  set_fact:
+    _peers_history_internal_cmdline_args: >
+      {{_peers_history_internal_cmdline_args}}
+      --verbose
+  when: peers_history_verbose
+
+- name: Add custom cmdline_args to the list
+  set_fact:
+    _peers_history_internal_cmdline_args: >
+      {{_peers_history_internal_cmdline_args}}
+      {{peers_history_cmdline_args| join(' ') }}
+  when: peers_history_cmdline_args != []
+
+- name: Sanitize cmdline_args
+  set_fact:
+    _peers_history_internal_cmdline_args: "{{_peers_history_internal_cmdline_args | replace('\n', '') | replace('\"', '')}}"
+
+- name: Show cmdline_args
+  debug:
+    msg: "{{_peers_history_internal_cmdline_args}}"

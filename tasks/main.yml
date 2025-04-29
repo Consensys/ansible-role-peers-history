@@ -1,0 +1,9 @@
+---
+- name: Install peers_history
+  include_tasks: "install.yml"
+
+- name: Create cmd line args
+  include_tasks: "cmdline.yml"
+
+- name: Create peers_history service
+  include_tasks: "service.yml"

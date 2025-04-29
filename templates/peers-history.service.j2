@@ -1,0 +1,17 @@
+[Unit]
+Description=peers-history
+After=syslog.target network.target
+
+[Service]
+User={{ peers_history_user }}
+Group={{ peers_history_group }}
+Environment=HOME=/home/{{ peers_history_user }}
+Type=simple
+ExecStart=/bin/sh -c "{{ peers_history_current_dir }}/bin/peers-history {{_peers_history_internal_cmdline_args}}"
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
+
