@@ -1,7 +1,41 @@
 ---
+- name: install | Lookup peers_history user
+  getent:
+    database: passwd
+    key: "{{ peers_history_user }}"
+  register: peers_history_user_entry
+  failed_when: false
+
+- name: install | Extract current UID (only if user exists)
+  set_fact:
+    peers_history_current_uid: "{{ peers_history_user_entry.ansible_facts.getent_passwd[peers_history_user][1] | int }}"
+  when: not peers_history_user_entry.failed
+
+- name: install | Determine if UID update is needed
+  set_fact:
+    peers_history_uid_needs_update: "{{ peers_history_current_uid != peers_history_uid }}"
+  when: not peers_history_user_entry.failed
+
+- name: install | Stop enabled peers_history services if UID needs update
+  service:
+    name: "peers-history"
+    state: stopped
+  when:
+    - not peers_history_user_entry.failed
+    - peers_history_uid_needs_update
+  become: true
+
+- name: install | Set updated optionally to trigger a systemd restart at the end
+  set_fact:
+    peers_history_state_updates: "{{ peers_history_state_updates + ['peers_history.uid'] }}"
+  when:
+    - not peers_history_user_entry.failed
+    - peers_history_uid_needs_update
+    
 - name: Ensure peers_history group exists
   group:
     name: "{{ peers_history_group }}"
+    gid: "{{ peers_history_gid }}"    
     state: present
   become: true
 
@@ -9,6 +43,7 @@
   user:
     comment:  peers_history client user
     name: "{{ peers_history_user }}"
+    uid: "{{ peers_history_uid }}"
     group: "{{ peers_history_group }}"
   become: true
 

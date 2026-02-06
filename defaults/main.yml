@@ -3,6 +3,8 @@
 # User and group
 peers_history_user: peers-history
 peers_history_group: "{{ peers_history_user }}"
+peers_history_uid: 1531
+peers_history_gid: 1531
 peers_history_version: "v1.0.0"
 
 # Version to install
