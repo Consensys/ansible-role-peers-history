@@ -85,10 +85,10 @@
     group: "{{ peers_history_group }}"
   become: true
 
-- name: Setup logrotate
-  template:
-    src: "logrotate/peers_history"
-    dest: "/etc/logrotate.d/peers_history"
+- name: Remove logrotate config if it exists
+  file:
+    path: "/etc/logrotate.d/peers_history"
+    state: absent
   become: true
 
 - name: Extract peers_history source to install directory
