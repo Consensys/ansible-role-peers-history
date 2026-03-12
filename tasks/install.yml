@@ -52,37 +52,18 @@
     group: "{{ peers_history_group }}"
   become: true
 
-- name: Create base directory
+- name: Create directories
   file:
-    path: "{{ peers_history_base_dir }}"
+    path: "{{ item }}"
     state: directory
     owner: "{{ peers_history_user }}"
     group: "{{ peers_history_group }}"
-  become: true
-
-- name: Create data directory
-  file:
-    path: "{{ peers_history_data_dir }}"
-    state: directory
-    owner: "{{ peers_history_user }}"
-    group: "{{ peers_history_group }}"
-    recurse: yes
-  become: true
-
-- name: Create install directory
-  file:
-    path: "{{ peers_history_install_dir }}"
-    state: directory
-    owner: "{{ peers_history_user }}"
-    group: "{{ peers_history_group }}"
-  become: true
-
-- name: Create log directory
-  file:
-    path: "{{ peers_history_log_dir }}"
-    state: directory
-    owner: "{{ peers_history_user }}"
-    group: "{{ peers_history_group }}"
+    recurse: true
+  loop:
+    - "{{ peers_history_base_dir }}"
+    - "{{ peers_history_data_dir }}"
+    - "{{ peers_history_install_dir }}"
+    - "{{ peers_history_log_dir }}"
   become: true
 
 - name: Remove logrotate config if it exists
